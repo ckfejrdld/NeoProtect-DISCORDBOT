@@ -6,7 +6,9 @@ import dns.resolver
 
 def verify_domain(domain):
     try:
-        answer = dns.resolver.resolve(domain, 'CNAME')
+        resolver = dns.resolver.Resolver()
+        resolver.lifetime = 10
+        answer = resolver.resolve(domain, 'CNAME')
         for rdata in answer:
             cname = str(rdata.target)
             if config.verification_cname in cname:

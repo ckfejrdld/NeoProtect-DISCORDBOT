@@ -77,7 +77,8 @@ async def on_message(message):
                     if data:
                         if api.verify_domain(split[3]) == True:
                             if api.create_domain(config.GameShieldsId, split[3]) == 200:
-                                if api.set_backend_to_domain(split[3], split[4]) == 200:
+                                set_backend_to_domain = api.set_backend_to_domain(split[3], split[4])
+                                if set_backend_to_domain == 200:
                                     con = connect_db()
                                     cur = con.cursor()
                                     cur.execute("INSERT INTO `proxy` VALUES(?, ?, ?, ?);", (split[3], split[4], message.author.id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%H"),))
@@ -85,6 +86,7 @@ async def on_message(message):
                                     con.close()
                                     await message.reply("성공적으로 등록되었습니다.")
                                 else:
+                                    print(set_backend_to_domain)
                                     await message.reply("오류가 발생했습니다. 명령어를 다시 확인해주세요.")
                             else:
                                 await message.reply("오류가 발생했습니다. 명령어를 다시 확인해주세요.")
@@ -99,7 +101,8 @@ async def on_message(message):
                 data = cur.fetchone()
                 con.close()
                 if data:
-                    if api.delete_domain(split[3]) == 200:
+                    delete_domain = api.delete_domain(split[3])
+                    if delete_domain == 200:
                         con = connect_db()
                         cur = con.cursor()
                         cur.execute("DELETE FROM `proxy` WHERE domain = ?;", (split[3],))
@@ -107,6 +110,7 @@ async def on_message(message):
                         con.close()
                         await message.reply("성공적으로 삭제되었습니다.")
                     else:
+                        print(delete_domain)
                         await message.reply("오류가 발생했습니다. 관리자에게 문의하세요.")
                 else:
                     await message.reply("등록되지 않았거나 본인이 소유하지 않은 도메인입니다.")
